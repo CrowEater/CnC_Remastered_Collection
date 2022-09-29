@@ -1144,7 +1144,7 @@ Setup_Shape_Header	endp
 ;
 ; Macro to fetch the header of the next line and jump to the appropriate routine
 ;
-next_line	macro
+_next_line_	macro
 
 		add	edi , [ dest_adjust_width ]	;add in dest modulo
 		dec	edx				;line counter
@@ -1619,7 +1619,7 @@ no_mmx_cleanup:
 ; ********************************************************************
 ;extern	BF_Copy:near
 
-BF_Copy:
+BF_Copy::
 	prologue
 
 	cmp	eax , 10
@@ -1667,11 +1667,11 @@ forward_loop_bytes:
 
 
 ;
-; Expand the 'next_line' macro so we can jump to it
+; Expand the '_next_line_' macro so we can jump to it
 ;
 ;
 ;  ST - 12/20/2018 3:48PM
-Next_Line::	next_line
+Next_Line::	_next_line_
 
 
 
@@ -1703,7 +1703,7 @@ slt_not_trans:mov	[edi],al		;u 	1
 		jnz	slt_mask_map_lp	;vee  (maybe)	1
 
 slt_end_line:	epilogue
-		next_line
+		_next_line_
 
 		;align	32
 
@@ -1721,7 +1721,7 @@ slt_skip:	inc	edi
 		jnz	slt_mask_map_lp
 
 		epilogue
-		next_line
+		_next_line_
 
 		;align	32
 
@@ -1750,7 +1750,7 @@ slt_round_again:
 
 slt_skip_end_line:
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -1788,7 +1788,7 @@ LSLC_aligned:
 		jz	proc_out
 		movsb
 proc_out:		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -1798,7 +1798,7 @@ proc_out:		epilogue
 ; 11/29/95 10:21AM - ST
 ;
 		;align	32
-Short_Single_Line_Copy:
+Short_Single_Line_Copy::
 		prologue
 		cmp	ecx,16
 		jge	Long_Single_Line_Copy
@@ -1806,7 +1806,7 @@ Short_Single_Line_Copy:
 		rep	movsb
 		mov	ecx,ebx
 		epilogue
-		next_line
+		_next_line_
 
 
 ;*****************************************************************************
@@ -1816,12 +1816,12 @@ Short_Single_Line_Copy:
 ;
 
 		;align	32
-Single_Line_Skip:
+Single_Line_Skip::
 		prologue
 		add	esi,ecx
 		add	edi,ecx
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -1831,7 +1831,7 @@ Single_Line_Skip:
 ; 11/29/95 10:21AM - ST
 ;
 		;align	32
-Single_Line_Ghost:
+Single_Line_Ghost::
 
 		prologue
 		xor	eax,eax
@@ -1854,7 +1854,7 @@ slg_store_pixel:
 		dec	ecx
 		jnz	slg_loop
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -1864,7 +1864,7 @@ slg_store_pixel:
 ; 11/29/95 10:21AM - ST
 ;
 		;align	32
-Single_Line_Ghost_Trans:
+Single_Line_Ghost_Trans::
 		prologue
 		xor	eax,eax
 ;		cmp	ecx,3
@@ -1892,7 +1892,7 @@ slgt_store_pixel:
 		dec	ecx
 		jnz	slgt_loop
 		epilogue
-		next_line
+		_next_line_
 
 
 		;align	32
@@ -1916,7 +1916,7 @@ slgt_round_again:
 		jmp	slgt_round_again
 
 slgt_out:	epilogue
-		next_line
+		_next_line_
 
 
 
@@ -1960,7 +1960,7 @@ slgt4_trans1:	ror	edx,8
 		jnz	slgt_loop
 
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -1978,7 +1978,7 @@ slgt4_trans1:	ror	edx,8
 ;
 		;align	32
 
-Single_Line_Fading:
+Single_Line_Fading::
 		prologue
 		xor	eax,eax
 		mov	ebx,[FadingTable]
@@ -2003,7 +2003,7 @@ slf_fade_loop:mov	al,[ebx+eax]
 		add	esp,4
 		pop	ebp
 		epilogue
-		next_line
+		_next_line_
 
 
 ;*****************************************************************************
@@ -2013,7 +2013,7 @@ slf_fade_loop:mov	al,[ebx+eax]
 ;
 		;align	32
 
-Single_Line_Fading_Trans:
+Single_Line_Fading_Trans::
 		prologue
 		xor	eax,eax
 		mov	ebx,[FadingTable]
@@ -2042,7 +2042,7 @@ slft_transparent:
 		add	esp,4
 		pop	ebp
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -2055,7 +2055,7 @@ slft_transparent:
 ;
 		;align	32
 
-Single_Line_Single_Fade:
+Single_Line_Single_Fade::
 		prologue
 		xor	eax,eax
 		mov	ebx,[FadingTable]
@@ -2069,7 +2069,7 @@ slsf_loop:	mov	al,[esi]
 		dec	ecx
 		jnz	slsf_loop
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -2080,7 +2080,7 @@ slsf_loop:	mov	al,[esi]
 ;
 		;align	32
 
-Single_Line_Single_Fade_Trans:
+Single_Line_Single_Fade_Trans::
 		prologue
 		xor	eax,eax
 		mov	ebx,[FadingTable]
@@ -2095,7 +2095,7 @@ slsft_loop:	mov	al,[esi]
 		dec	ecx
 		jnz	slsft_loop
 		epilogue
-		next_line
+		_next_line_
 
 		;align	32
 
@@ -2103,7 +2103,7 @@ slsft_transparent:
 		inc	edi
 
 		dec	ecx
-		jz	slsft_next_line
+		jz	slsft__next_line_
 		mov	al,[esi]
 		inc	esi
 		test	al,al
@@ -2114,9 +2114,9 @@ slsft_transparent:
 		dec	ecx
 		jnz	slsft_loop
 
-slsft_next_line:
+slsft__next_line_:
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -2129,7 +2129,7 @@ slsft_next_line:
 ;
 		;align	32
 
-Single_Line_Ghost_Fading:
+Single_Line_Ghost_Fading::
 
 		prologue
 		mov	[StashECX],ecx
@@ -2163,7 +2163,7 @@ slgf_fade_loop:
 		dec	[StashECX]
 		jnz	SLGF_loop
 		epilogue
-		next_line
+		_next_line_
 
 
 ;*****************************************************************************
@@ -2173,7 +2173,7 @@ slgf_fade_loop:
 ;
 		;align	32
 
-Single_Line_Ghost_Fading_Trans:
+Single_Line_Ghost_Fading_Trans::
 		prologue
 		mov	[StashECX],ecx
 		xor	eax,eax
@@ -2212,7 +2212,7 @@ slgft_trans_pixel:
 		dec	[StashECX]
 		jnz	SLGFT_loop
 		epilogue
-		next_line
+		_next_line_
 
 
 		;align	32
@@ -2260,7 +2260,7 @@ slgft4_trans:	ror	edx,8
 		jmp	SLGFT_loop
 
 slgft4_out:	epilogue
-		next_line
+		_next_line_
 
 
 ;*****************************************************************************
@@ -2270,7 +2270,7 @@ slgft4_out:	epilogue
 ;
 		;align	32
 
-Single_Line_Predator:
+Single_Line_Predator::
 
 		prologue
 
@@ -2303,7 +2303,7 @@ slp_skip_pixel:
 		jnz	slp_loop
 
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -2315,7 +2315,7 @@ slp_skip_pixel:
 ;
 		;align	32
 
-Single_Line_Predator_Trans:
+Single_Line_Predator_Trans::
 
 		prologue
 
@@ -2350,7 +2350,7 @@ slpt_skip_pixel:
 		jnz	slpt_loop
 
 		epilogue
-		next_line
+		_next_line_
 
 
 ;*****************************************************************************
@@ -2360,7 +2360,7 @@ slpt_skip_pixel:
 ;
 		;align	32
 
-Single_Line_Predator_Ghost:
+Single_Line_Predator_Ghost::
 
 		prologue
 
@@ -2406,7 +2406,7 @@ slpg_store_pixel:
 		jnz	slpg_loop
 
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -2417,7 +2417,7 @@ slpg_store_pixel:
 ;
 		;align	32
 
-Single_Line_Predator_Ghost_Trans:
+Single_Line_Predator_Ghost_Trans::
 		prologue
 
 slpgt_loop:	mov	al,[esi]
@@ -2467,7 +2467,7 @@ slpgt_transparent:
 
 		pop	ecx
 		epilogue
-		next_line
+		_next_line_
 
 
 ;*****************************************************************************
@@ -2477,7 +2477,7 @@ slpgt_transparent:
 ;
 		;align	32
 
-Single_Line_Predator_Fading:
+Single_Line_Predator_Fading::
 
 		prologue
 		mov	[StashECX],ecx
@@ -2519,7 +2519,7 @@ slpf_fade_loop:
 		jnz	slpf_loop
 
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -2530,7 +2530,7 @@ slpf_fade_loop:
 ;
 		;align	32
 
-Single_Line_Predator_Fading_Trans:
+Single_Line_Predator_Fading_Trans::
 		prologue
 		mov	[StashECX],ecx
 
@@ -2575,7 +2575,7 @@ slpft_transparent:
 		jnz	slpft_loop
 
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -2586,7 +2586,7 @@ slpft_transparent:
 ;
 		;align	32
 
-Single_Line_Predator_Ghost_Fading:
+Single_Line_Predator_Ghost_Fading::
 
 		prologue
 		mov	[StashECX],ecx
@@ -2644,7 +2644,7 @@ slpgf_store_pixel:
 		jnz	slpgf_loop
 
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -2655,7 +2655,7 @@ slpgf_store_pixel:
 ;
 		;align	32
 
-Single_Line_Predator_Ghost_Fading_Trans:
+Single_Line_Predator_Ghost_Fading_Trans::
 
 		prologue
 		mov	[StashECX],ecx
@@ -2717,7 +2717,7 @@ slpgft_transparent:
 		jnz	slpgft_loop
 
 		epilogue
-		next_line
+		_next_line_
 
 
 
@@ -2730,7 +2730,7 @@ slpgft_transparent:
 
 ;extern	BF_Trans:near
 
-BF_Trans:
+BF_Trans::
 
 	prologue
 ; calc the code location to skip to 10 bytes per REPT below!!!!
@@ -2781,7 +2781,7 @@ trans_reference:
 ;********************************************************************
 
 ;extern	BF_Ghost:near
-BF_Ghost:
+BF_Ghost::
 
 	prologue
 	mov	ebx , eax			; width
@@ -2850,7 +2850,7 @@ ghost_reference:
 ;********************************************************************
 
 ;extern	BF_Ghost_Trans:near
-BF_Ghost_Trans:
+BF_Ghost_Trans::
 
 	prologue
 	mov	ebx , eax			; width
@@ -2925,7 +2925,7 @@ ghost_t_reference:
 ;********************************************************************
 
 ;extern	BF_Fading:near
-BF_Fading:
+BF_Fading::
 
 	prologue
 	mov	ebx , eax			; width
@@ -2993,7 +2993,7 @@ fading_reference:
 ;********************************************************************
 
 ;extern	BF_Fading_Trans:near
-BF_Fading_Trans:
+BF_Fading_Trans::
 
 	prologue
 	mov	ebx , eax			; width
@@ -3067,7 +3067,7 @@ fading_t_reference:
 ;********************************************************************
 
 ;extern	BF_Ghost_Fading:near
-BF_Ghost_Fading:
+BF_Ghost_Fading::
 
 	prologue
 	mov	ebx , eax			; width
@@ -3153,7 +3153,7 @@ ghost_f_reference:
 ;********************************************************************
 
 ;extern	BF_Ghost_Fading_Trans:near
-BF_Ghost_Fading_Trans:
+BF_Ghost_Fading_Trans::
 
 	prologue
 	mov	ebx , eax			; width
@@ -3245,7 +3245,7 @@ ghost_f_t_reference:
 ;********************************************************************
 
 ;extern	BF_Predator:near
-BF_Predator:
+BF_Predator::
 
 	prologue
 	mov	ebx , eax			; width
@@ -3328,7 +3328,7 @@ predator_reference:
 ;********************************************************************
 
 ;extern	BF_Predator_Trans:near
-BF_Predator_Trans:
+BF_Predator_Trans::
 
 	prologue
 	mov	ebx , eax			; width
@@ -3410,7 +3410,7 @@ predator_t_reference:
 ;********************************************************************
 
 ;extern	BF_Predator_Ghost:near
-BF_Predator_Ghost:
+BF_Predator_Ghost::
 
 	prologue
 	mov	ebx , eax			; width
@@ -3501,7 +3501,7 @@ predator_g_reference:
 ;********************************************************************
 
 ;extern	BF_Predator_Ghost_Trans:near
-BF_Predator_Ghost_Trans:
+BF_Predator_Ghost_Trans::
 
 	prologue
 	mov	ebx , eax			; width
@@ -3598,7 +3598,7 @@ predator_g_t_reference:
 ;********************************************************************
 
 ;extern	BF_Predator_Fading:near
-BF_Predator_Fading:
+BF_Predator_Fading::
 
 	prologue
 	mov	ebx , eax			; width
@@ -3688,7 +3688,7 @@ predator_f_reference:
 ;********************************************************************
 
 ;extern	BF_Predator_Fading_Trans:near
-BF_Predator_Fading_Trans:
+BF_Predator_Fading_Trans::
 
 	prologue
 	mov	ebx , eax			; width
@@ -3784,7 +3784,7 @@ predator_f_t_reference:
 ;********************************************************************
 
 ;extern	BF_Predator_Ghost_Fading:near
-BF_Predator_Ghost_Fading:
+BF_Predator_Ghost_Fading::
 
 	prologue
 	mov	ebx , eax			; width
@@ -3892,7 +3892,7 @@ predator_g_f_reference:
 ;********************************************************************
 
 ;extern	BF_Predator_Ghost_Fading_Trans:near
-BF_Predator_Ghost_Fading_Trans:
+BF_Predator_Ghost_Fading_Trans::
 
 	prologue
 	mov	ebx , eax			; width
@@ -4262,9 +4262,9 @@ MMX_Single_Line_Trans proc near
 ; Jump to the approprite code for drawing the end of this line or going to the next one
 ;
 		push	offset Next_Line
-		jcxz   	@@next_line
+		jcxz   	@@_next_line_
 		push	offset Single_Line_Trans_Entry
-@@next_line:	ret
+@@_next_line_:	ret
 
 
 MMX_Single_Line_Trans endp
